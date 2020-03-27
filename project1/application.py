@@ -20,9 +20,6 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
-# Session(app)
-# engine = create_engine(os.getenv("DATABASE_URL"))
-# db = scoped_session(sessionmaker(bind=engine))
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -44,34 +41,16 @@ class User(db.Model):
 
 @app.route("/")
 def index():
-    # if 'name' in session:
-    #     name = session["name"]
-    #     return render_template("index.html", flag = True, name = name)
     return render_template("index.html", flag = False)
 
 @app.route("/register", methods = ["GET", "POST"])
-def register():
-    # if session.get("remember") is None:
-    #     session["name"] = ""
-    #     session["password"] = ""
-    # elif session.get("remember") == "yes": // Will uncomment it when logout is implemented.
-    #     return render_template("register.html", flag = True, name = session["name"])   
-    if request.method == "POST":
-        # session["name"] = (request.form.get("name"))
-        # session["password"] = (request.form.get("password"))
-        # session["remember"] = (request.form.get("remember"))
-        # print("Printing name recieved from User:" + session["name"]) // This 
-        # is for Task-3 purpose so commented it out.
+def register():  
+    if request.method == "POST":       
         db.session.add(User(request.form.get("name"), request.form.get("password")))
-        # db.execute("INSERT INTO users (user, password,timestamp) VALUES (:username, :password, :timestamp)",
-        #     {"username":request.form.get("user"), "password":request.form.get("password"), "timestamp":datetime.datetime.now()})
-        db.session.commit()
         return render_template("register.html", flag = True, name = request.form.get("name"))
     return render_template("register.html", flag = False)
 
 @app.route("/admin")
 def admin():
-
     users = User.query.order_by(User.timestamp.desc()).all()
-
     return render_template("admin.html", users = users)
