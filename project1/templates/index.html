@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
 {% block content %}
-	<h1> Welcome to Books </h1>
+	{% if flag %}
+		<h1> Welcome to Books {{ name }}</h1>
+	{% else %}
+		<h1> Welcome to Books</h1>
+	{% endif %}
 {% endblock content %}
