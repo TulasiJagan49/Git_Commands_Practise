@@ -1,10 +1,12 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <h1>Error</h1>
 
-    {{ message }}
-    <div>
-    	<a href = "{{ url_for('register') }}"> GO BACK </a>
-	</div>
+    <div class="alert alert-warning" role="alert">
+       <h4 class="alert-heading">Error!!!</h4>
+        <p>{{ message }}</p>
+        <hr>
+        <a href = "{{ url_for('register') }}" class="mb-0" >Please login to continue.</a>      
+    </div>
+
 {% endblock content %}

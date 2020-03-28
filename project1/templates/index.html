@@ -5,5 +5,11 @@
 		<h1> Welcome to Books {{ name }}</h1>
 	{% else %}
 		<h1> Welcome to Books</h1>
+		<div class="alert alert-info" role="alert">
+	       <h4 class="alert-heading">Hi!</h4>
+	        <p>{{ message }}</p>
+	        <hr>
+	        <a href = "{{ url_for('register') }}" class="mb-0" >Please login to continue.</a>
+    	</div>
 	{% endif %}
 {% endblock content %}

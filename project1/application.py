@@ -41,9 +41,11 @@ class User(db.Model):
 
 @app.route("/")
 def index():
+
     if(session.get("name") != None and session.get("password") != None):
         return render_template("index.html", flag = True, name = session.get("name"))
-    return render_template("index.html", flag = False)
+    return render_template("/index.html", flag = False,
+     message = """ You have to login to continue...Please access the link provided below or navigate through the nav bar.""")
 
 @app.route("/register", methods = ["GET", "POST"])
 def register():  
@@ -123,3 +125,14 @@ def auth():
             return render_template("error.html", 
                 message = """You might not be registered user. Please register first""")
 
+# For this task-2 already session is created and 
+# now in this route is cleared.
+@app.route("/logout")
+def logout():
+    """ Log user out """
+
+    # Forget any user ID
+    session.clear()
+
+    # Redirect user to login form
+    return redirect("/")
