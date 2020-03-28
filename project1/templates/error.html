@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <h1>Error</h1>
+
+    {{ message }}
+    <div>
+    	<a href = "{{ url_for('register') }}"> GO BACK </a>
+	</div>
+{% endblock content %}
