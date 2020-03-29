@@ -16,11 +16,9 @@ def main():
     db.execute("CREATE TABLE books (isbn VARCHAR PRIMARY KEY,title VARCHAR NOT NULL,author VARCHAR NOT NULL,year INTEGER NOT NULL)")
     f=open("books.csv")
     reader =csv.reader(f)
+    headers = reader.next()
     for isbn,title,author,year in reader:
-        if year == "year":
-            print('skipped first line')
-        else:    
-            db.execute("INSERT INTO books (isbn, title, author, year) VALUES (:a,:b,:c,:d)",{"a":isbn,"b":title,"c":author,"d":year})
+        db.execute("INSERT INTO books (isbn, title, author, year) VALUES (:a,:b,:c,:d)",{"a":isbn,"b":title,"c":author,"d":year})
         
     print("done")            
     db.commit()
