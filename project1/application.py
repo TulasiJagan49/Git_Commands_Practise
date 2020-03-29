@@ -42,7 +42,7 @@ class User(db.Model):
 @app.route("/")
 def index():
 
-    if(session.get("name") != None and session.get("password") != None):
+    if(session.get("name") != None):
         return render_template("index.html", flag = True, name = session.get("name"))
     return render_template("/index.html", flag = False,
      message = """ You have to login to continue...Please access the link provided below or navigate through the nav bar.""")
@@ -105,17 +105,14 @@ def auth():
     if request.method == "POST":
         try:
             session['name'] = request.form.get("name")
-            session['password'] = request.form.get("password")
             
             if not session['name']:
                 return render_template("error.html", message="Please provide User name.")
-            if not session['password']:
+            if not request.form.get("password"):
                 return render_template("error.html", message="Please provide Password.")
-            print("The above line")
             data = User.query.filter_by(name=session['name']).one()
-            print(data.name, data.password)
-            print(check_password_hash(session['password'], data.password))
-            if check_password_hash(data.password, session['password']):
+            
+            if check_password_hash(data.password, request.form.get("password")):
                 return redirect("/")
             else:
                 return render_template("error.html",
