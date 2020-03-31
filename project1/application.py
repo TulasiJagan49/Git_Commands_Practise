@@ -26,7 +26,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key = True,nullable = False)
@@ -38,6 +37,20 @@ class User(db.Model):
         self.name = name
         self.password = generate_password_hash(request.form.get("password"))
         self.timestamp = datetime.datetime.now()
+
+class Book(db.Model):
+    __tablename__ = "books"
+    # id = db.Column(db.Integer, primary_key = True, nullable = False)
+    isbn = db.Column(db.String, primary_key = True, nullable = False)
+    title = db.Column(db.String, nullable = False)
+    author = db.Column(db.String, nullable = False)
+    year = db.Column(db.Integer, nullable = False)
+
+    def __init__(self, isbn, title, author, year):
+        self.isbn = isbn
+        self.title = title
+        self.author = author
+        self.year = year
 
 @app.route("/")
 def index():
@@ -55,9 +68,9 @@ def register():
 
         # Checking whether all the fields are filled.
         if not request.form.get("name"):
-            return render_template("error.html", message="Please provide User name.")
+            return render_template("error.html", message="Please provide User name.",prev_page="register")
         if not request.form.get("password"):
-            return render_template("error.html", message="Please provide Password.")
+            return render_template("error.html", message="Please provide Password.",prev_page="register")
 
         # Trying to see whether the user is already present or not. If present
         # will ask the user to login.
@@ -72,11 +85,12 @@ def register():
         # database.
         except:
             try:  
+                # print(request.form.get("name"))
+                # print(request.form.get("password"))
                 db.session.add(User(request.form.get("name"),
                  request.form.get("password")))
                 db.session.commit()
 
-                os.system("flask db init")
                 os.system("flask db migrate")
                 os.system("flask db upgrade")
 
@@ -84,11 +98,12 @@ def register():
                         name = request.form.get("name"),
                         message = """Aww yeah, you successfully registered
                          for this application.""")
-            except:
-                return render_template("register.html", flag = False,
+            except Exception as ex:
+                db.session.rollback()
+                return render_template("error.html", flag = False,
                     message = """There was some error on our side. 
-                    Please try registering again.""")
-    # This is the for get request to present the register page.
+                    Please try registering again.""", prev_page = "register") 
+                       # This is the for get request to present the register page.
     return render_template("register.html", flag = False, message = "")
 
 @app.route("/admin")
@@ -136,6 +151,6 @@ def logout():
 
 @app.route("/book/<isbn>",methods=['GET'])
 def book(isbn):
-    book = Book.query.filter_by(Book.isbn==isbn).one()
+    book = Book.query.filter_by(year=isbn).all()
     print(book)
     return render_template("book.html",isbn=isbn)
