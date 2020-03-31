@@ -1,14 +1,15 @@
 import os
 import datetime
 import logging
-from flask import Flask, session, render_template, request, redirect
+from flask import Flask, session, render_template, request, redirect, url_for
 from flask_session import Session
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, or_
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask_migrate import Migrate
 from werkzeug.security import check_password_hash, generate_password_hash
+
 
 app = Flask(__name__)
 
@@ -39,13 +40,28 @@ class User(db.Model):
         self.password = generate_password_hash(request.form.get("password"))
         self.timestamp = datetime.datetime.now()
 
+class Book(db.Model):
+    __tablename__ = "books"
+    id = db.Column(db.Integer, primary_key = True, nullable = False)
+    isbn = db.Column(db.String, nullable = False)
+    title = db.Column(db.String, nullable = False)
+    author = db.Column(db.String, nullable = False)
+    year = db.Column(db.Integer, nullable = False)
+
+    def __init__(self, isbn, title, author, year):
+        self.isbn = isbn
+        self.title = title
+        self.author = author
+        self.year = year
+
 @app.route("/")
 def index():
 
     if(session.get("name") != None):
         return render_template("index.html", flag = True, name = session.get("name"))
-    return render_template("/index.html", flag = False,
-     message = """ You have to login to continue...Please access the link provided below or navigate through the nav bar.""")
+    return render_template("index.html", flag = False,
+     message = """ You have to login to continue...
+     Please access the link provided below or navigate through the nav bar.""")
 
 @app.route("/register", methods = ["GET", "POST"])
 def register():  
@@ -55,9 +71,11 @@ def register():
 
         # Checking whether all the fields are filled.
         if not request.form.get("name"):
-            return render_template("error.html", message="Please provide User name.")
+            return render_template("error.html", message="Please provide User name.",
+             prev_page = "register" )
         if not request.form.get("password"):
-            return render_template("error.html", message="Please provide Password.")
+            return render_template("error.html", message="Please provide Password.", 
+            prev_page = "register")
 
         # Trying to see whether the user is already present or not. If present
         # will ask the user to login.
@@ -76,7 +94,6 @@ def register():
                  request.form.get("password")))
                 db.session.commit()
 
-                os.system("flask db init")
                 os.system("flask db migrate")
                 os.system("flask db upgrade")
 
@@ -84,10 +101,11 @@ def register():
                         name = request.form.get("name"),
                         message = """Aww yeah, you successfully registered
                          for this application.""")
-            except:
-                return render_template("register.html", flag = False,
+            except Exception as ex:
+                db.session.rollback()
+                return render_template("error.html", flag = False,
                     message = """There was some error on our side. 
-                    Please try registering again.""")
+                    Please try registering again.""", prev_page = "register")
     # This is the for get request to present the register page.
     return render_template("register.html", flag = False, message = "")
 
@@ -107,9 +125,11 @@ def auth():
             session['name'] = request.form.get("name")
             
             if not session['name']:
-                return render_template("error.html", message="Please provide User name.")
+                return render_template("error.html", message="Please provide User name.",
+                prev_page = "register")
             if not request.form.get("password"):
-                return render_template("error.html", message="Please provide Password.")
+                return render_template("error.html", message="Please provide Password.",
+                prev_page = "register")
             data = User.query.filter_by(name=session['name']).one()
             
             if check_password_hash(data.password, request.form.get("password")):
@@ -120,7 +140,8 @@ def auth():
         except:
             session.clear()
             return render_template("error.html", 
-                message = """You might not be registered user. Please register first""")
+                message = """You might not be registered user. Please register first""",
+                prev_page = "register")
 
 # For this task-2 already session is created and 
 # now in this route is cleared.
@@ -133,3 +154,39 @@ def logout():
 
     # Redirect user to login form
     return redirect("/")
+
+@app.route("/search")
+def search():
+    if not request.args.get("book"):
+        return render_template("error.html", 
+        message="Please provide details of a book.",
+        prev_page = "index")
+
+    # Take input and add a wildcard
+    book_query = "%" + request.args.get("book") + "%"
+
+    # Capitalize all words of input for search
+
+    book_query = book_query.title()
+
+    # rows = db.session.execute("SELECT isbn, title, author, year FROM books WHERE \
+    #                     isbn LIKE :book_query OR \
+    #                     title LIKE :book_query OR \
+    #                     author LIKE :book_query LIMIT 15",
+    #                     {"book_query": book_query})
+    
+    books = Book.query.filter(
+        or_(Book.isbn.like(book_query),
+        Book.title.like(book_query),
+        Book.author.like(book_query))).all()
+    
+    # Books not found
+    if len(books) == 0:
+        return render_template("error.html", message="We can't find any books.",
+         prev_page = "index")
+    
+    return render_template("search.html", books=books)
+
+@app.route("/book/<id>")
+def book_page(id):
+    return
