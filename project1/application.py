@@ -133,3 +133,9 @@ def logout():
 
     # Redirect user to login form
     return redirect("/")
+
+@app.route("/book/<isbn>",methods=['GET'])
+def book(isbn):
+    book = Book.query.filter_by(Book.isbn==isbn).one()
+    print(book)
+    return render_template("book.html",isbn=isbn)
