@@ -169,12 +169,6 @@ def search():
 
     book_query = book_query.title()
 
-    # rows = db.session.execute("SELECT isbn, title, author, year FROM books WHERE \
-    #                     isbn LIKE :book_query OR \
-    #                     title LIKE :book_query OR \
-    #                     author LIKE :book_query LIMIT 15",
-    #                     {"book_query": book_query})
-    
     books = Book.query.filter(
         or_(Book.isbn.like(book_query),
         Book.title.like(book_query),
@@ -186,7 +180,3 @@ def search():
          prev_page = "index")
     
     return render_template("search.html", books=books)
-
-@app.route("/book/<id>")
-def book_page(id):
-    return
