@@ -11,9 +11,7 @@ engine= create_engine(os.getenv("DATABASE_URL"))
 db =scoped_session(sessionmaker(bind=engine))
 
 def main():
-    # db.execute("CREATE TABLE users (id SERIAL PRIMARY KEY, username VARCHAR NOT NULL, password VARCHAR NOT NULL)")
-    # db.execute("CREATE TABLE reviews (isbn VARCHAR NOT NULL,review VARCHAR NOT NULL, rating INTEGER NOT NULL,username VARCHAR NOT NULL)")
-    db.execute("CREATE TABLE books (isbn VARCHAR PRIMARY KEY,title VARCHAR NOT NULL,author VARCHAR NOT NULL,year INTEGER NOT NULL)")
+    db.execute("CREATE TABLE books (id INTEGER PRIMARY KEY, isbn VARCHAR NOT NULL,title VARCHAR NOT NULL,author VARCHAR NOT NULL,year INTEGER NOT NULL)")
     f=open("books.csv")
     reader =csv.reader(f)
     headers = reader.next()
