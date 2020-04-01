@@ -127,6 +127,7 @@ def search():
 
     books = search_book(request.args.get("book"))
     
+
     if len(books) == 0:
         return render_template("error.html", message="We can't find any books.",
          prev_page = "index")

@@ -6,6 +6,8 @@ if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
 
 def main():
+
+    db.execute("CREATE TABLE books (id INTEGER PRIMARY KEY, isbn VARCHAR NOT NULL,title VARCHAR NOT NULL,author VARCHAR NOT NULL,year INTEGER NOT NULL)")
     f=open("books.csv")
     reader =csv.reader(f)
     headers = reader.next()
