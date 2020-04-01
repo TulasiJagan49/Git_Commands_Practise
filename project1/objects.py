@@ -3,6 +3,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import datetime
 
 db = SQLAlchemy()
+
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key = True,nullable = False)

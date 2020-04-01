@@ -22,3 +22,9 @@ def search_book(book_query):
         Book.year.like(book_query))).all()
 
     return books
+
+def main():
+    print(search_book("0380795272")[0].title)
+
+if __name__ == "__main__":
+    main()
