@@ -1,5 +1,16 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <h1>{{isbn}}</h1>
+    <br> <br> <br>
+    <div class="row" style="justify-content: center">
+        <div class="col-sm-4">
+            <img src="http://covers.openlibrary.org/b/isbn/{{book.isbn}}-M.jpg" width="200px">
+        </div>
+        <div class="col-sm-4">
+            <h1>{{book.title}}</h1>
+            <h5>Author: {{book.author}}</h5>
+            <h5>Published: {{book.year}}</h5>
+            <h5>ISBN-10: {{book.isbn}}</h5>            
+        </div>
+    </div>    
 {% endblock content %}

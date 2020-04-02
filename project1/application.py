@@ -1,14 +1,12 @@
-import os
-import datetime
-import logging
-from flask import Flask, session, render_template, request, redirect
+import os, datetime, logging
+from flask import Flask, session, render_template, request, redirect, url_for
 from flask_session import Session
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
 from flask_migrate import Migrate
 from werkzeug.security import check_password_hash, generate_password_hash
+from objects import User, Book
+from bookpage import getbook
 
 app = Flask(__name__)
 
@@ -26,31 +24,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-class User(db.Model):
-    __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key = True,nullable = False)
-    name = db.Column(db.String, nullable = False)
-    password = db.Column(db.String(255), nullable = False)
-    timestamp = db.Column(db.DateTime, nullable = False)
-
-    def __init__(self, name, password):
-        self.name = name
-        self.password = generate_password_hash(request.form.get("password"))
-        self.timestamp = datetime.datetime.now()
-
-class Book(db.Model):
-    __tablename__ = "books"
-    # id = db.Column(db.Integer, primary_key = True, nullable = False)
-    isbn = db.Column(db.String, primary_key = True, nullable = False)
-    title = db.Column(db.String, nullable = False)
-    author = db.Column(db.String, nullable = False)
-    year = db.Column(db.Integer, nullable = False)
-
-    def __init__(self, isbn, title, author, year):
-        self.isbn = isbn
-        self.title = title
-        self.author = author
-        self.year = year
 
 @app.route("/")
 def index():
@@ -149,8 +122,7 @@ def logout():
     # Redirect user to login form
     return redirect("/")
 
-@app.route("/book/<isbn>",methods=['GET'])
-def book(isbn):
-    book = Book.query.filter_by(year=isbn).all()
-    print(book)
-    return render_template("book.html",isbn=isbn)
+@app.route("/book/<id>",methods=['GET'])
+def book(id):
+    book = getbook(id)
+    return render_template("book.html",book=book)
