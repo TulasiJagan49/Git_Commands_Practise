@@ -1,12 +1,12 @@
 import os, datetime, logging
-from flask import Flask, session, render_template, request, redirect, url_for
+from flask import Flask, session, render_template, request, redirect, url_for, jsonify
 from flask_session import Session
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import check_password_hash, generate_password_hash
 from objects import User, Book
-from book_details import getbook
+from book_details import getbookbyid, getbookbyisbn
 
 app = Flask(__name__)
 
@@ -124,5 +124,17 @@ def logout():
 
 @app.route("/book/<id>",methods=['GET'])
 def book(id):
-    book = getbook(id)
+    book = getbookbyid(id)
     return render_template("book.html",book=book)
+
+@app.route("/api/book/<isbn>")
+def book_details_api(isbn):
+    book = getbookbyisbn(isbn)
+    if book is None:
+        return jsonify({"error":"Incorrect ISBN!"}), 422
+    elif book:
+        return jsonify({"ISBN" : book.isbn, "Title": book.title, 
+        "Author" : book.author, 
+        "year" : int(book.year)}), 200
+
+

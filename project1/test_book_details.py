@@ -1,5 +1,5 @@
 import unittest 
-from book_details import getbook
+from book_details import getbookbyisbn, getbookbyid
 
 import os
 from flask import Flask
@@ -30,20 +30,32 @@ class TestStringMethods(unittest.TestCase):
 
     # tests to check if the details of book are correct after a query
 
-    def testISBN(self):
-        book = getbook("1")
+    def testISBNbyId(self):
+        book = getbookbyid("1")
         self.assertEqual(book.isbn, "0380795272")
 
-    def testTitle(self):
-        book = getbook("1")
+    def testTitlebyId(self):
+        book = getbookbyid("1")
         self.assertEqual(book.title, "Krondor: The Betrayal")
 
-    def testAuthor(self):
-        book = getbook("1")
+    def testAuthorbyId(self):
+        book = getbookbyid("1")
         self.assertEqual(book.author, "Raymond E. Feist")
 
-    def testYear(self):
-        book = getbook("1")
+    def testYearbyID(self):
+        book = getbookbyid("1")
+        self.assertEqual(book.year, 1998)
+
+    def testTitlebyISBN(self):
+        book = getbookbyisbn("0380795272")
+        self.assertEqual(book.title, "Krondor: The Betrayal")
+
+    def testAuthorbyISBN(self):
+        book = getbookbyisbn("0380795272")
+        self.assertEqual(book.author, "Raymond E. Feist")
+
+    def testYearbyISBN(self):
+        book = getbookbyisbn("0380795272")
         self.assertEqual(book.year, 1998)
 
     def tearDown(self):
