@@ -17,5 +17,8 @@ def getbookbyid(id):
 # return the book object by isbn
 
 def getbookbyisbn(isbn):
-    book = Book.query.filter_by(isbn=isbn).one()
-    return book
+    try:
+        book = Book.query.filter_by(isbn=isbn).one()
+        return book
+    except:
+        return None

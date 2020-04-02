@@ -124,14 +124,14 @@ def logout():
 
 @app.route("/book/<id>",methods=['GET'])
 def book(id):
-    book = getbookbyid(id)
+    book = getbookbyid(int(id))
     return render_template("book.html",book=book)
 
-@app.route("/api/book/<isbn>")
+@app.route("/api/book/<isbn>",methods=['GET'])
 def book_details_api(isbn):
     book = getbookbyisbn(isbn)
     if book is None:
-        return jsonify({"error":"Incorrect ISBN!"}), 422
+        return jsonify({"error":"Incorrect ISBN!"}), 404
     elif book:
         return jsonify({"ISBN" : book.isbn, "Title": book.title, 
         "Author" : book.author, 
