@@ -1,24 +1,51 @@
 {% extends "layout.html" %}
-
+{% block javascript %}
+<script src="{{url_for('static',filename='index.js')}}"></script>
+{% endblock %}
 {% block content %}
 {% if flag %}
 <div>
-	<h1 style="text-align: center; padding-top: 5%;"> Welcome to Books {{ name }}</h1>
+	<h1 style="text-align: center;"> Welcome to Books {{ name }}</h1>
 </div>
-<div class="container-fluid" style="padding: 5%">
+<div class="container-fluid" style="padding: 2%">
 	<div class="row">
 		<div class="col-md-3"></div>
 		<div class="col-md-6">
-			<form action="/search" method="GET">
-				<div class="form-group">
-					<input type="text" class="form-control" name="book" autofocus aria-describedby="bookHelp"
+			<form action="#" method="GET">
+				<div class="input-group">
+					<input type="text" class="form-control" id="book" autofocus aria-describedby="bookHelp"
 						placeholder="Search for a book, ISBN/Title/Author">
 				</div>
-				<button class="btn btn-primary" type="submit">Search</button>
+				<br>
+				<button class="btn btn-primary" id="search_submit" type="submit" onClick="search()">Search</button>
+				<br>
 			</form>
 		</div>
 		<div class="col-md-3"></div>
 	</div>
+	<div class="row">
+		<div class="col-sm-6">
+			<table class="table">
+                <thead class="thead-light">
+                  <tr>
+                    <th>Results:</th>
+                  </tr>
+                </thead>
+                <tbody id="result">
+                </tbody>
+              </table>
+		</div>
+		<div class="col-sm-6">
+			<table class="table">
+                <thead class="thead-light">
+                    <tr>
+                      <th scope="col" colspan=2>Details of the book that you have selected are as follows:</th>
+                    </tr>
+                  </thead>
+                  <tbody id="details"></tbody>
+                </table>
+		</div>
+	</div>	
 </div>
 {% else %}
 <h1> Welcome to Books</h1>

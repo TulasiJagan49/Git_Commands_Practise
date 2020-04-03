@@ -18,8 +18,10 @@ def search_book(book_query):
     books = Book.query.filter(
         or_(Book.isbn.like(book_query),
         Book.title.like(book_query),
-        Book.author.like(book_query),
-        Book.year.like(book_query))).all()
+        Book.author.like(book_query)
+        # ,
+        # Book.year.like(book_query)
+        )).all()
 
     return books
 

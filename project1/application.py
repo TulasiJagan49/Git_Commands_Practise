@@ -157,6 +157,7 @@ def api_search():
 
     if request.is_json:
         content = request.get_json()
+        print(content)
         if 'query' in content:
             query = content['query'].strip()
             books = search_book(query)
