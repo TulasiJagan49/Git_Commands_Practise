@@ -121,7 +121,7 @@ def logout():
     session.clear()
     return redirect("/")
 
-@app.route("/book/<id>",methods=['POST'])
+@app.route("/book/<id>",methods=['GET'])
 def book(id):
     book = getbookbyid(int(id))
     return render_template("book.html",book=book)
