@@ -1,6 +1,7 @@
 import os, csv
 
-from objects import Book, db
+from objects import Book
+from application import db
 
 if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")

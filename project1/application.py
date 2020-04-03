@@ -22,10 +22,12 @@ Session(app)
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
+
+# db = SQLAlchemy(app)
 db.init_app(app)
 app.app_context().push()
 db.create_all()
-
+# migrate = Migrate(app, db)
 
 @app.route("/")
 def index():
@@ -69,7 +71,12 @@ def register():
                 # print(request.form.get("password"))
                 db.session.add(User(request.form.get("name"),
                                     request.form.get("password")))
+<<<<<<< HEAD
                 db.session.commit()
+=======
+                db.session.commit() 
+
+>>>>>>> 082a2b84ff180b4159f4b679c0850738497dd1f8
                 return render_template("register.html", flag = True,
                                         name = request.form.get("name"),
                                         message = """Aww yeah, you successfully
@@ -117,7 +124,6 @@ def auth():
 def logout():
     session.clear()
     return redirect("/")
-
 
 @app.route("/book/<id>",methods=['GET'])
 def book(id):
