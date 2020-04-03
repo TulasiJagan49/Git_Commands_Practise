@@ -1,12 +1,11 @@
 import os, csv
 
-from objects import Book
+from objects import Book, db
 
 if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
 
 def main():
-
     f=open("books.csv")
     reader =csv.reader(f)
     headers = reader.next()
