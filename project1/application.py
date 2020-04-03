@@ -1,5 +1,5 @@
-import os, datetime, logging
-from flask import Flask, session, render_template, request, redirect, url_for
+import os, datetime, logging, requests
+from flask import Flask, session, render_template, request, redirect, url_for, jsonify
 from flask_session import Session
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
@@ -133,3 +133,31 @@ def search():
          prev_page = "index")
     
     return render_template("search.html", books=books)
+
+@app.route("/api/search/", methods=['POST'])
+def api_search():
+
+    if request.is_json:
+        content = request.get_json()
+        if 'query' in content:
+            query = content['query'].strip()
+            books = search_book(query)
+            if books:
+                l = []
+                books_json = {}
+                for book in books:
+                    d = {}
+                    d['isbn'] = book.isbn
+                    d['title'] = book.title
+                    d['author'] = book.author
+                    d['year'] = int(book.year)
+                    l.append(d)
+                books_json['books'] = l
+                return (jsonify(books_json), 200) 
+            else:
+                return (jsonify({'Error': "No book was found."}), 404) 
+        else:
+            return (jsonify({'Error': "Invalid JSON data"}), 400)
+    else:
+        return (jsonify({"Error": "Takes only json as input"}), 422)
+        
