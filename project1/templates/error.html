@@ -2,11 +2,11 @@
 
 {% block content %}
 
-    <div class="alert alert-warning" role="alert">
-       <h4 class="alert-heading">Error!!!</h4>
-        <p>{{ message }}</p>
-        <hr>
-        <a href = "{{ url_for('register') }}" class="mb-0" >Please login to continue.</a>      
-    </div>
+<div class="alert alert-warning" role="alert">
+    <h4 class="alert-heading">Error!!!</h4>
+    <p>{{ message }}</p>
+    <hr>
+    <a href="{{ url_for(prev_page) }}" class="mb-0">Go Back</a>
+</div>
 
 {% endblock content %}

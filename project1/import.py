@@ -1,23 +1,16 @@
-import os
-import csv
+import os, csv
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from objects import Book, db
 
 if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
 
-engine= create_engine(os.getenv("DATABASE_URL"))
-db =scoped_session(sessionmaker(bind=engine))
-
 def main():
-    db.execute("CREATE TABLE books (id SERIAL PRIMARY KEY, isbn VARCHAR NOT NULL,title VARCHAR NOT NULL,author VARCHAR NOT NULL,year INTEGER NOT NULL)")
     f=open("books.csv")
     reader =csv.reader(f)
     headers = next(reader)
     for isbn,title,author,year in reader:
-        db.execute("INSERT INTO books (isbn, title, author, year) VALUES (:a,:b,:c,:d)",{"a":isbn,"b":title,"c":author,"d":year})
-        
+        db.session.add(Book(isbn,title,author,year))        
     print("done")            
     db.commit()
 
