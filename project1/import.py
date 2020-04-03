@@ -8,7 +8,7 @@ if not os.getenv("DATABASE_URL"):
 def main():
     f=open("books.csv")
     reader =csv.reader(f)
-    headers = reader.next()
+    headers = next(reader)
     for isbn,title,author,year in reader:
         db.session.add(Book(isbn,title,author,year))        
     print("done")            
