@@ -12,7 +12,7 @@ def main():
     for isbn,title,author,year in reader:
         db.session.add(Book(isbn,title,author,year))        
     print("done")            
-    db.commit()
+    db.session.commit()
 
 if __name__ == "__main__":
     main()

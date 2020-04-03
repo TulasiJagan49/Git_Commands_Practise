@@ -5,7 +5,7 @@ from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import check_password_hash, generate_password_hash
-from objects import User, Book
+from objects import User, Book, db
 from book_details import getbookbyid, getbookbyisbn
 from search import search_book
 
@@ -22,8 +22,9 @@ Session(app)
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+db.init_app(app)
+app.app_context().push()
+db.create_all()
 
 
 @app.route("/")
@@ -69,10 +70,6 @@ def register():
                 db.session.add(User(request.form.get("name"),
                                     request.form.get("password")))
                 db.session.commit()
-
-                os.system("flask db migrate")
-                os.system("flask db upgrade")
-
                 return render_template("register.html", flag = True,
                                         name = request.form.get("name"),
                                         message = """Aww yeah, you successfully
@@ -179,5 +176,4 @@ def api_search():
         else:
             return (jsonify({'Error': "Invalid JSON data"}), 400)
     else:
-        return (jsonify({"Error": "Takes only json as input"}), 422)
-        
+        return (jsonify({"Error": "Takes only json as input"}), 422)    
