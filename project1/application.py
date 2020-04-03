@@ -122,7 +122,7 @@ def logout():
     # Redirect user to login form
     return redirect("/")
 
-@app.route("/book/<id>",methods=['GET'])
+@app.route("/book/<id>",methods=['POST'])
 def book(id):
     book = getbookbyid(int(id))
     return render_template("book.html",book=book)
