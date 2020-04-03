@@ -179,8 +179,3 @@ def api_search():
     else:
         return (jsonify({"Error": "Takes only json as input"}), 422)
         
-# if __name__ == "__main__":
-#     db.create_all()
-#     db.session.commit()
-    # os.system("flask db migrate")
-    # os.system("flask db upgrade")

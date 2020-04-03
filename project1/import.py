@@ -7,7 +7,6 @@ if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
 
 def main():
-    # db.create_all()
     f=open("books.csv")
     reader =csv.reader(f)
     headers = next(reader)
