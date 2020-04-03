@@ -1,11 +1,12 @@
 import os, datetime, logging
-from flask import Flask, session, render_template, request, redirect, url_for
+from flask import Flask, session, render_template, request, redirect, url_for, jsonify
 from flask_session import Session
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import check_password_hash, generate_password_hash
 from objects import User, Book
+from book_details import getbookbyid, getbookbyisbn
 from search import search_book
 
 app = Flask(__name__)
@@ -63,6 +64,8 @@ def register():
         # database.
         except:
             try:  
+                # print(request.form.get("name"))
+                # print(request.form.get("password"))
                 db.session.add(User(request.form.get("name"),
                                     request.form.get("password")))
                 db.session.commit()
@@ -117,6 +120,23 @@ def auth():
 def logout():
     session.clear()
     return redirect("/")
+
+
+@app.route("/book/<id>",methods=['GET'])
+def book(id):
+    book = getbookbyid(int(id))
+    return render_template("book.html",book=book)
+
+@app.route("/api/book/<isbn>",methods=['GET'])
+def book_details_api(isbn):
+    book = getbookbyisbn(isbn)
+    if book is None:
+        return jsonify({"error":"Incorrect ISBN!"}), 404
+    elif book:
+        return jsonify({"ISBN" : book.isbn, "Title": book.title, 
+        "Author" : book.author, 
+        "year" : int(book.year)}), 200
+
 
 @app.route("/search")
 def search():
