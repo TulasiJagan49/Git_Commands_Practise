@@ -14,7 +14,7 @@ function search() {
             var data = JSON.parse(xhr.responseText);
             console.log(data)
             var json_array = data["books"];
-            var content = "";
+            var content = '<thead class="thead-light"><tr><th>Results:</th></tr></thead>';
             for (x in json_array) {
                 content += '<tr> <th scope="row"> <a href="#" onclick=book("'+ json_array[x]["isbn"] + '")>' + json_array[x]["title"] +'</a> </th> </tr>';
             }
@@ -33,7 +33,8 @@ function book(isbn) {
         if (xhr.status === 200) {
             let s = JSON.parse(xhr.responseText);
             console.log(s)
-            var content = '<tr> <td scope="row">ISBN Number</td><td>' + s.ISBN + '</td></tr>' +
+            var content = '<thead class="thead-light"><tr><th scope="col" colspan=2>Details:</th></tr></thead>';
+            content += '<tr> <td scope="row">ISBN Number</td><td>' + s.ISBN + '</td></tr>' +
                             '<tr> <td scope="row">Title</td><td>' + s.Title + '</td></tr>' +
                             '<tr> <td scope="row">Auhtor</td><td>' + s.Author + '</td></tr>' +
                             '<tr> <td scope="row">Year</td><td>' + s.year + '</td></tr>'
